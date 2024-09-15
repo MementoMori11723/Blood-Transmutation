@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Blood-Transmutation/server"
 	"Blood-Transmutation/webscraper"
 	"fmt"
 )
@@ -16,4 +17,6 @@ func main() {
 		fmt.Println("URL: ", data.Url)
 		data.ParceURL()
 	}
+  go server.StartServer()
+  fmt.Scanln()
 }
