@@ -13,6 +13,6 @@ func RunScrape(urlArr *[]string) {
 			fmt.Println("Error:", data.Err)
 			return
 		}
-		data.ParceURL(&urlArr)
+		data.ParceHTML()
 	}
 }
