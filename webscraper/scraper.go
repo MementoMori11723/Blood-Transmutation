@@ -1,6 +1,7 @@
 package webscraper
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"regexp"
@@ -24,7 +25,7 @@ func (s *Scrape) ParceURL(arr *[]string) {
 }
 
 func (s *Scrape) ParceTXT() {
-	// Parce content here
+// need to implement this function with an nlp algorithm.
 }
 
 func GetContent(url string) Scrape {
@@ -36,6 +37,13 @@ func GetContent(url string) Scrape {
 			Err:     err,
 		}
 	}
+  if resp.StatusCode != http.StatusOK {
+    return Scrape{
+      Content: "",
+      Url:     url,
+      Err:     errors.New("Status code is not 200"),
+    }
+  }
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
