@@ -7,7 +7,7 @@ import (
 
 func StartServer(arr *[]string) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "URLs: %v", *arr)
+		fmt.Fprintf(w, "URLs length : %v", len(*arr))
 	})
 
 	fmt.Println("Server is running on port 8080")
