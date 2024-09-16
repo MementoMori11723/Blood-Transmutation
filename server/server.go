@@ -5,11 +5,11 @@ import (
 	"net/http"
 )
 
-func StartServer() {
-  http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello World!")
-  })
-  
-  fmt.Println("Server is running on port 8080")
-  http.ListenAndServe(":8080", nil)
+func StartServer(arr *[]string) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "URLs: %v", *arr)
+	})
+
+	fmt.Println("Server is running on port 8080")
+	http.ListenAndServe(":8080", nil)
 }
