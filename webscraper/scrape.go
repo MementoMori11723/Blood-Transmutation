@@ -12,7 +12,7 @@ type Scrape struct {
 	Err     error
 }
 
-func (s *Scrape) ParceHTML() []interface{} {
+func (s *Scrape) ParceHTML() interface{} {
 	if strings.Contains(s.Url, "google.com") {
 		regex := regexp.MustCompile(`<a href="/url\?q=(.*?)&amp;`)
 		matches := regex.FindAllStringSubmatch(s.Content, -1)
@@ -22,21 +22,17 @@ func (s *Scrape) ParceHTML() []interface{} {
 				arr = append(arr, match[1])
 			}
 		}
-		return []interface{}{
-			arr,
-		}
+		return arr
 	} else {
 		reader := strings.NewReader(s.Content)
 		var output strings.Builder
 
 		doc, err := html.Parse(reader)
 		if err != nil {
-			return []interface{}{
-				Scrape{
-					Content: "",
-					Url:     s.Url,
-					Err:     err,
-				},
+			return Scrape{
+				Content: "",
+				Url:     s.Url,
+				Err:     err,
 			}
 		}
 		var traverse func(*html.Node)
@@ -57,12 +53,10 @@ func (s *Scrape) ParceHTML() []interface{} {
 		whitespace := regexp.MustCompile(`\s+`)
 		result = whitespace.ReplaceAllString(result, " ")
 		result = strings.TrimSpace(result)
-		return []interface{}{
-			Scrape{
-				Content: result,
-				Url:     s.Url,
-				Err:     err,
-			},
+		return Scrape{
+			Content: result,
+			Url:     s.Url,
+			Err:     err,
 		}
 	}
 }

@@ -13,6 +13,18 @@ func RunScrape(urlArr *[]string) {
 			fmt.Println("Error:", data.Err)
 			return
 		}
-		data.ParceHTML()
+    res := data.ParceHTML()
+    urls := res.([]string)
+    *urlArr = append(*urlArr, urls...)
 	}
+  for _, url := range *urlArr {
+    fmt.Println(url)
+    data := GetContent(url)
+    if data.Err != nil {
+      fmt.Println("Error:", data.Err)
+      return
+    }
+    res := data.ParceHTML()
+    fmt.Println(res.(Scrape).Content)
+  }
 }
