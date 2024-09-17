@@ -5,12 +5,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/html"
 	"io"
 	"net/http"
 	"regexp"
 	"strings"
-
-	"golang.org/x/net/html"
 )
 
 type Scrape struct {
@@ -20,13 +19,13 @@ type Scrape struct {
 }
 
 type Message struct {
-    Role    string `json:"role"`
-    Content string `json:"content"`
+	Role    string `json:"role"`
+	Content string `json:"content"`
 }
 
 type ChatCompletionRequest struct {
-    Model    string    `json:"model"`
-    Messages []Message `json:"messages"`
+	Model    string    `json:"model"`
+	Messages []Message `json:"messages"`
 }
 
 func (s *Scrape) ParceHTML() interface{} {
@@ -35,7 +34,7 @@ func (s *Scrape) ParceHTML() interface{} {
 		matches := regex.FindAllStringSubmatch(s.Content, -1)
 		var arr []string
 		for _, match := range matches {
-			if !strings.Contains(match[1], "google.com") && !strings.Contains(match[1],"youtube.com") && strings.Contains(match[1], "https") {
+			if !strings.Contains(match[1], "google.com") && !strings.Contains(match[1], "youtube.com") && strings.Contains(match[1], "https") {
 				arr = append(arr, match[1])
 			}
 		}
@@ -80,19 +79,19 @@ func (s *Scrape) ParceHTML() interface{} {
 
 func (s *Scrape) Summarize() {
 	url := "https://api.openai.com/v1/chat/completions"
-  msg := ChatCompletionRequest{
-    Model: "gpt-4o-mini",
-    Messages: []Message{
-      {
-        "system",
-        "You are a helpful assistant.",
-      },
-      {
-        "user",
-        "Summarize the content, " + s.Content,
-      },
-    },
-  } 
+	msg := ChatCompletionRequest{
+		Model: "gpt-4o-mini",
+		Messages: []Message{
+			{
+				"system",
+				"You are a helpful assistant.",
+			},
+			{
+				"user",
+				"Summarize the content, " + s.Content,
+			},
+		},
+	}
 	jsonData, err := json.Marshal(msg)
 	if err != nil {
 		fmt.Println("Error:", err)
