@@ -1,5 +1,11 @@
 package config
 
+import (
+	"os"
+
+	"github.com/joho/godotenv"
+)
+
 var (
 	Url       = "https://www.google.com/search?q="
 	Pages     = "&start="
@@ -18,3 +24,14 @@ var (
 		"what chemicals are legal in the medical field",
 	}
 )
+
+func init() {
+  err := godotenv.Load()
+  if err != nil {
+    panic(err)
+  }
+}
+
+func ApiKey() string {
+  return os.Getenv("ApiKey")
+}

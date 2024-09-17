@@ -24,7 +24,7 @@ func RunScrape(urlArr *[]string) {
       fmt.Println("Error:", data.Err)
       return
     }
-    res := data.ParceHTML()
-    fmt.Println(res.(Scrape).Content)
+    res := data.ParceHTML().(Scrape)
+    res.Summarize()
   }
 }

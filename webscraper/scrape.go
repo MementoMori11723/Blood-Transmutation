@@ -1,9 +1,16 @@
 package webscraper
 
 import (
-	"golang.org/x/net/html"
+	"Blood-Transmutation/config"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 	"regexp"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 type Scrape struct {
@@ -12,13 +19,23 @@ type Scrape struct {
 	Err     error
 }
 
+type Message struct {
+    Role    string `json:"role"`
+    Content string `json:"content"`
+}
+
+type ChatCompletionRequest struct {
+    Model    string    `json:"model"`
+    Messages []Message `json:"messages"`
+}
+
 func (s *Scrape) ParceHTML() interface{} {
 	if strings.Contains(s.Url, "google.com") {
 		regex := regexp.MustCompile(`<a href="/url\?q=(.*?)&amp;`)
 		matches := regex.FindAllStringSubmatch(s.Content, -1)
 		var arr []string
 		for _, match := range matches {
-			if !strings.Contains(match[1], "google.com") && strings.Contains(match[1], "https") {
+			if !strings.Contains(match[1], "google.com") && !strings.Contains(match[1],"youtube.com") && strings.Contains(match[1], "https") {
 				arr = append(arr, match[1])
 			}
 		}
@@ -62,5 +79,39 @@ func (s *Scrape) ParceHTML() interface{} {
 }
 
 func (s *Scrape) Summarize() {
-	// need to implement this function with an nlp algorithm.
+	url := "https://api.openai.com/v1/chat/completions"
+  msg := ChatCompletionRequest{
+    Model: "gpt-4o-mini",
+    Messages: []Message{
+      {
+        "system",
+        "You are a helpful assistant.",
+      },
+      {
+        "user",
+        "Summarize the content, " + s.Content,
+      },
+    },
+  } 
+	jsonData, err := json.Marshal(msg)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+config.ApiKey())
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	fmt.Println(string(data))
 }
