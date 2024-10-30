@@ -4,30 +4,52 @@ import (
 	"Blood-Transmutation/config"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 )
 
-type GPTRequestMessage struct {
+type gptRequestMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-type GPTRequest struct {
-	Model    string              `json:"model"`
-	Messages []GPTRequestMessage `json:"messages"`
+type gptRequest struct {
+	Model       string              `json:"model"`
+	Messages    []gptRequestMessage `json:"messages"`
+	Temperature int64               `json:"temperature"`
 }
 
-type GPTResponse struct {}
+type GPTResponse struct {
+	Choices []struct {
+		Message struct {
+			Content string `json:"content"`
+		} `json:"message"`
+	} `json:"choices"`
+}
 
-func GetDataFromGpt(question, options string) GPTResponse {
+func getDataFromGpt(question, options string) (string, error) {
+	var responce GPTResponse
+
 	client := http.Client{
 		Timeout: time.Second * 10,
 	}
 
-	gptRequest := GPTRequest{
+	if question == "" {
+		return "", errors.New(
+      "No question found!",
+    )
+	}
+
+	if options == "" {
+		return "", errors.New(
+      "No question found!",
+    )
+	}
+
+	gptRequest := gptRequest{
 		Model: "gpt-4o-mini",
-		Messages: []GPTRequestMessage{
+		Messages: []gptRequestMessage{
 			{
 				Role:    "system",
 				Content: options,
@@ -37,31 +59,53 @@ func GetDataFromGpt(question, options string) GPTResponse {
 				Content: question,
 			},
 		},
+		Temperature: 0,
 	}
 
-	url := config.GetGPTTextData()
-	jsonData, err := json.Marshal(gptRequest)
-	if err != nil {
-		panic(err)
-  }
+	url, api := config.GetGPTTextData()
 
-	req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonData))
+	jsonData, err := json.
+		Marshal(gptRequest)
 	if err != nil {
 		panic(err)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest(
+		"GET", url,
+		bytes.
+			NewBuffer(jsonData),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	req.Header.Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	req.Header.Set(
+		"Authorization",
+		"Bearer "+api,
+	)
+
 	res, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
 
 	defer res.Body.Close()
-	var body GPTResponse
-  err = json.NewDecoder(res.Body).Decode(&body)
-  if err != nil {
-    panic(err)
-  }
 
-	return body
+	err = json.
+		NewDecoder(res.Body).
+		Decode(&responce)
+	if err != nil {
+		panic(err)
+	}
+
+	return responce.
+			Choices[0].
+			Message.
+			Content,
+		nil
 }
