@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+  "github.com/joho/godotenv"
 )
 
 var (
@@ -12,6 +13,10 @@ var (
 )
 
 func init() {
+  err := godotenv.Load()
+  if err != nil {
+    log.Fatal("Error loading .env file")
+  }
   GPTApiKey = os.Getenv("API_KEY")
   if GPTApiKey == "" {
     log.Fatal("Can't find api key!")
