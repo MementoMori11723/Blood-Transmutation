@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Blood Transmutation Dashboard</title>
+  <!-- Latest Minified jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      font-family: "Arial", sans-serif;
+      background-color: #f9f9f9;
+      color: #333333;
+    }
+
+    /* Navigation Bar */
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+      padding: 15px 30px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav .logo {
+      font-size: 1.5em;
+      color: #ff6f61;
+      text-decoration: none;
+    }
+
+    /* Main Content */
+    main {
+      padding: 100px 20px 60px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    main h2 {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      color: #ff6f61;
+      text-align: center;
+    }
+
+    .dashboard-content {
+      text-align: center;
+    }
+
+    .blood-selection {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .blood-selection select {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #cccccc;
+      background-color: #ffffff;
+      color: #333333;
+      width: 150px;
+    }
+
+    .blood-selection button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #ff6f61;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .blood-selection button:hover {
+      background-color: #e65c54;
+    }
+
+    .result {
+      font-size: 1.1em;
+      color: #333333;
+      margin-top: 20px;
+      text-align: justify;
+    }
+
+    .loading {
+      font-size: 1.2em;
+      color: #ff6f61;
+      margin-top: 20px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #ffffff;
+      color: #777777;
+      padding: 20px;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    footer p {
+      font-size: 0.9em;
+      margin: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      main h2 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Main Content -->
+  <main>
+    <h2>Blood Group Conversion</h2>
+    <div class="dashboard-content">
+      <p>
+        Select two blood groups below to learn about the conversion process
+        using machine learning.
+      </p>
+      <div class="blood-selection">
+        <select id="blood-group-1">
+          <option value="">Select Blood Group 1</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+
+        <select id="blood-group-2">
+          <option value="">Select Blood Group 2</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+
+        <button id="get-info-btn">Get Info</button>
+      </div>
+      <div class="loading" id="loading-message" style="display: none">
+        Loading...
+      </div>
+      <div class="result" id="conversion-result"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2023 Blood Transmutation Project. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript Code -->
+  <script>
+    $(document).ready(function () {
+      $("#get-info-btn").on("click", function () {
+        const group1 = $("#blood-group-1").val();
+        const group2 = $("#blood-group-2").val();
+        const resultDiv = $("#conversion-result");
+        const loadingMessage = $("#loading-message");
+
+        resultDiv.empty();
+
+        if (group1 && group2) {
+          // Show loading message
+          loadingMessage.show();
+
+          // Send POST request to the backend
+          $.ajax({
+            url: "/api",
+            type: "POST",
+            data: JSON.stringify({
+              bloodGroup1: group1,
+              bloodGroup2: group2,
+            }),
+            contentType: "application/json",
+            success: function (response) {
+              // Hide loading message
+              loadingMessage.hide();
+
+              // Display the response
+              console.log(response);
+              resultDiv.html(response);
+            },
+            error: function (xhr, status, error) {
+              // Hide loading message
+              loadingMessage.hide();
+
+              // Display error message
+              resultDiv.html(
+                `<p style="color: #FF6F61;">An error occurred: ${xhr.responseText || error}</p>`,
+              );
+            },
+          });
+        } else {
+          resultDiv.html(
+            '<p style="color: #FF6F61;">Please select both blood groups.</p>',
+          );
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

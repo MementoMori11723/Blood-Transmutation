@@ -32,7 +32,7 @@ func getDataFromGpt(question, options string) (string, error) {
 	var responce GPTResponse
 
 	client := http.Client{
-		Timeout: time.Second * 10,
+		Timeout: time.Second * 30,
 	}
 
 	if question == "" {
@@ -71,7 +71,7 @@ func getDataFromGpt(question, options string) (string, error) {
 	}
 
 	req, err := http.NewRequest(
-		"GET", url,
+		"POST", url,
 		bytes.
 			NewBuffer(jsonData),
 	)

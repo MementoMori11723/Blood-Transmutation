@@ -8,6 +8,7 @@ import (
 )
 
 var (
+  GPTImageUrl = "https://api.openai.com/v1/images/generations"
   GPTTextUrl = "https://api.openai.com/v1/chat/completions"
   GPTApiKey string
 )
@@ -25,4 +26,8 @@ func init() {
 
 func GetGPTTextData() (string, string) {
   return GPTTextUrl, GPTApiKey
+}
+
+func GetGPTImageData() (string, string) {
+  return GPTImageUrl, GPTApiKey
 }

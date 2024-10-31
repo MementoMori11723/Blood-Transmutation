@@ -1,21 +1,22 @@
 package client
 
 import (
-  "net/http"
+	"html/template"
+	"net/http"
 )
 
+var pagesDir = "client/pages/"
+
 func home(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("home"))
-}
-
-func about(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("about"))
-}
-
-func dashboard(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("dashboard"))
-}
-
-func error(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("error"))
+	tmpl, err := template.ParseFiles(
+		pagesDir + "Home.html",
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := tmpl.Execute(w, nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
