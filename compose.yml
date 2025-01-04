@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blood_app
+    env_file:
+      - app.env
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"

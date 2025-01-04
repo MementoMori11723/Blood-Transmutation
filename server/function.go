@@ -2,7 +2,9 @@ package server
 
 import (
 	"Blood-Transmutation/server/models"
+	"embed"
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 )
@@ -24,4 +26,19 @@ func api(w http.ResponseWriter, r *http.Request) {
   log.Println("Response received from model")
 	w.Write([]byte(res))
   log.Println("Response sent to client")
+}
+
+//go:embed pages
+var pagesDir embed.FS
+
+func home(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFS(pagesDir, "pages/Home.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := tmpl.Execute(w, nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

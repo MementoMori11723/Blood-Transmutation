@@ -13,7 +13,7 @@ func init() {
   PORT = os.Getenv("PORT")
   if PORT == "" {
     log.Println("PORT not found, using default value")
-    PORT = "8080"
+    PORT = "8000"
   }
 }
 
