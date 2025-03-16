@@ -1,5 +1,5 @@
 run :
-	@docker-compose -f compose.yml -p blood up --build -d
+	@docker-compose -f config/compose.yml -p blood up --build -d
 
 stop :
-	@docker-compose -f compose.yml -p blood down --remove-orphans
+	@docker-compose -f config/compose.yml -p blood down --remove-orphans
