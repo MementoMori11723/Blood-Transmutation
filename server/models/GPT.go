@@ -31,20 +31,18 @@ type GPTResponse struct {
 func getDataFromGpt(question, options string) (string, error) {
 	var responce GPTResponse
 
-	client := http.Client{
-		Timeout: time.Second * 300,
-	}
+	client := http.Client{}
 
 	if question == "" {
 		return "", errors.New(
-      "No question found!",
-    )
+			"No question found!",
+		)
 	}
 
 	if options == "" {
 		return "", errors.New(
-      "No question found!",
-    )
+			"No question found!",
+		)
 	}
 
 	gptRequest := gptRequest{
