@@ -48,7 +48,7 @@ func getDataFromGpt(question, options string) (string, error) {
 	}
 
 	gptRequest := gptRequest{
-		Model: "gpt-4o-mini",
+		Model: "deepseek-chat",
 		Messages: []gptRequestMessage{
 			{
 				Role:    "system",

@@ -9,7 +9,7 @@ var (
 	PORT      string
 	GPTApiKey string
 
-	GPTTextUrl = "https://api.openai.com/v1/chat/completions"
+	GPTTextUrl = "https://api.deepseek.com/chat/completions"
 )
 
 func init() {
