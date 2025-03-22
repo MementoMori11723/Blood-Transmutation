@@ -32,7 +32,7 @@ func getDataFromGpt(question, options string) (string, error) {
 	var responce GPTResponse
 
 	client := http.Client{
-		Timeout: time.Second * 30,
+		Timeout: time.Second * 300,
 	}
 
 	if question == "" {
